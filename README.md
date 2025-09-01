@@ -1,0 +1,152 @@
+# nextjs-mcp-middleware
+
+A Next.js middleware library for handling MCP (Model Context Protocol) server with OAuth2 authorization. This package provides utilities to help developers integrate MCP OAuth2-related processes into their Next.js applications.
+
+## Features
+- 🛡️ MCP OAuth2 authorization flow support
+- ⚡️ Compatible with Next.js 15.5+ middleware mechanism
+- 🧩 Extensible middleware architecture for customization
+- 🪝 Built-in authentication, registration, and token validation middleware
+- 🔧 Flexible token verification with custom endpoints
+
+## Requirements
+- **Next.js 15.5.2 or higher** (required for MCP middleware compatibility)
+- **Node.js runtime** (middleware must use `runtime: 'nodejs'` configuration)
+
+## Installation
+
+```bash
+pnpm add nextjs-mcp-middleware
+# or
+npm install nextjs-mcp-middleware
+# or
+yarn add nextjs-mcp-middleware
+```
+
+> ⚠️ We recommend using pnpm for the best dependency compatibility.
+
+## Quick Start
+
+### 1. Configure MCP SDK
+Ensure your project has `@modelcontextprotocol/sdk` properly installed and configured.
+
+### 2. Setup Middleware
+
+```ts
+// src/middleware.ts
+import { nextMcpMiddleware } from 'nextjs-mcp-middleware'
+
+// Token verification function
+async function verifyToken(req: Request, bearerToken?: string): Promise<AuthInfo | undefined> {
+  if (!bearerToken)
+    return undefined
+
+  // MCP client verification logic
+  return {
+    token: bearerToken,
+    scopes: ['profile'], // Add relevant scopes
+    clientId: '', // Add user/client identifier
+    extra: {
+      // Optional extra information
+      userId: '',
+    },
+  }
+}
+
+const { middlewareGenerator, matcher } = nextMcpMiddleware({
+  mcpHandlerParams: {
+    mcpServer: (server) => {
+      useMcp(server)
+      registerTools()
+    },
+    mcpHandlerOptions: {},
+    mcpHandlerConfig: {
+      basePath: '/api',
+      maxDuration: 60,
+      verboseLogs: true,
+    },
+    verifyToken,
+  },
+  metadata: {
+    clientId: process.env.SSO_CLIENT_ID || '',
+    clientSecret: process.env.SSO_CLIENT_SECRET || '',
+    scopesSupported: ['profile'],
+    responseTypesSupported: ['code', 'token'],
+  },
+  needAuth: true,
+  authConfig: {
+    async customAuthEndpoint(params: authCallParams) {
+      const { responseType, clientId, redirectUri, scope, state } = params
+      return `${process.env.SSO_HOST}/v1/oauth/authorize?response_type=${responseType}&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${state}`
+    },
+    async customToken(params: tokenCallParams, _request) {
+      const { code, grantType } = params
+      const response = await ssoServer.post(
+        `/v1/oauth/token?code=${code}&grant_type=${grantType}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      return await response.json()
+    },
+  },
+})
+
+export const middleware = middlewareGenerator
+
+export const config = {
+  runtime: 'nodejs', // Required: Must use nodejs runtime
+  // matcher, // Optional: Use generated matcher or define your own
+}
+```
+
+### 3. Environment Variables
+
+```env
+SSO_CLIENT_ID=your_client_id
+SSO_CLIENT_SECRET=your_client_secret
+SSO_HOST=https://your-sso-server.com
+```
+
+## API Reference
+
+### `nextMcpMiddleware(options)`
+
+Main function to create MCP middleware with OAuth2 support.
+
+#### Options
+
+- `mcpHandlerParams`: MCP server configuration
+- `metadata`: OAuth2 client metadata
+- `needAuth`: Enable/disable authentication requirement
+- `authConfig`: Custom authentication endpoints configuration
+
+### Types
+
+- `AuthInfo`: Token verification result interface
+- `authCallParams`: Authorization endpoint parameters
+- `tokenCallParams`: Token endpoint parameters
+
+## Configuration
+
+### Runtime Requirement
+
+**Important**: Your middleware configuration must specify `runtime: 'nodejs'`:
+
+```ts
+export const config = {
+  runtime: 'nodejs', // Required for MCP middleware
+}
+```
+
+### Next.js Version
+
+This package requires **Next.js 15.5.2 or higher** for proper MCP middleware support.
+
+## Dependencies
+
+- [@modelcontextprotocol/sdk](https://www.npmjs.com/package/@modelcontextprotocol/sdk)
+- [zod](https://www.npmjs.com/package/zod)
+- [mcp-handler](https://www.npmjs.com/package/mcp-handler)
