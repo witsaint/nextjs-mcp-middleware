@@ -1,0 +1,1 @@
+export { nextMcpMiddleware } from './middles'

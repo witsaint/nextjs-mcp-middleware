@@ -1,0 +1,65 @@
+{
+  "name": "nextjs-mcp-middleware",
+  "type": "module",
+  "version": "0.0.1",
+  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac",
+  "description": "A Next.js middleware library for handling MCP server with authorization. Provides utilities to help developers integrate MCP OAuth2-related processes into their applications",
+  "author": "witsaint",
+  "license": "MIT",
+  "keywords": [
+    "nextjs",
+    "language model",
+    "mcp",
+    "middleware",
+    "authorization",
+    "oauth2"
+  ],
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "build-release": "unbuild",
+    "dev": "unbuild --dev",
+    "lint": "eslint . --cache --cache-location .cache/eslint/main.eslintcache",
+    "test": "run-s test-unit",
+    "test-unit": "vitest run --passWithNoTests",
+    "test-unit-watch": "vitest watch --ui",
+    "typecheck": "tsc --project ./tsconfig.json --noEmit",
+    "lint-staged-files": "lint-staged --allow-empty",
+    "postinstall": "pnpm build",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "peerDependencies": {
+    "next": "^15.5.2"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "catalog:",
+    "mcp-handler": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:cli",
+    "@types/next": "catalog:",
+    "@types/node": "catalog:types",
+    "bumpp": "catalog:cli",
+    "eslint": "catalog:cli",
+    "lint-staged": "catalog:cli",
+    "simple-git-hooks": "catalog:cli",
+    "tinyexec": "catalog:utils",
+    "tsx": "catalog:cli",
+    "typescript": "catalog:cli",
+    "unbuild": "catalog:cli",
+    "vitest": "catalog:testing",
+    "vitest-package-exports": "catalog:testing"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm i --frozen-lockfile --ignore-scripts --offline && npx lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
+  }
+}
