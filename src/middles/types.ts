@@ -51,15 +51,16 @@ export interface AuthConfig {
 
 export type NextMcpMiddlewareOptions = {
   mcpHandlerParams: mcpHandlerParams
-  metadata: Metadata
   next?: (request: NextRequest) => NextResponse
 } & (
   | {
     needAuth: true
+    metadata: Metadata
     authConfig: AuthConfig
   }
   | {
     needAuth: false
+    metadata?: Metadata
     authConfig?: AuthConfig
   }
 )

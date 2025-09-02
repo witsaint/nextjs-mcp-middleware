@@ -159,9 +159,15 @@ SSO_HOST=https://你的-sso-服务器.com
 #### 选项
 
 - `mcpHandlerParams`: MCP 服务器配置
-- `metadata`: OAuth2 客户端元数据
 - `needAuth`: 启用/禁用身份验证要求
-- `authConfig`: 自定义身份验证端点配置
+- `metadata`: OAuth2 客户端元数据， `needAuth: true` 时必须提供
+  - `clientId`: OAuth2 的客户端 ID
+  - `clientSecret`: OAuth2 的客户端密钥
+  - `scopesSupported`: 支持的 OAuth2 作用域列表
+  - `responseTypesSupported`: 支持的 OAuth2 响应类型列表
+- `authConfig`: 自定义身份验证端点配置， `needAuth: true` 时必须提供
+  - `customAuthEndpoint`: 自定义授权端点
+  - `customToken`: 自定义令牌端点
 
 ### 类型
 

@@ -13,6 +13,7 @@ export function nextMcpMiddleware(options: NextMcpMiddlewareOptions): {
 } {
   const { mcpHandlerParams, metadata, next, authConfig, needAuth } = options
   const { mcpHandlerConfig } = mcpHandlerParams
+  const { scopesSupported } = metadata || {}
 
   const { basePath = '/api' } = mcpHandlerConfig || {}
   const mcpPath = `${basePath}/mcp`
@@ -36,9 +37,9 @@ export function nextMcpMiddleware(options: NextMcpMiddlewareOptions): {
       return mcpMiddleware(
         request,
         mcpHandlerParams,
-        metadata,
         protectedPath,
         needAuth,
+        scopesSupported || [],
       )
     }
 

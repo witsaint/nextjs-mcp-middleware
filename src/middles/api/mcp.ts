@@ -1,12 +1,11 @@
-import type { mcpHandlerParams, Metadata } from '../types'
+import type { mcpHandlerParams } from '../types'
 import { createMcpHandler, withMcpAuth } from 'mcp-handler'
 import { type NextRequest, NextResponse } from 'next/server'
 
-export async function mcpMiddleware(request: NextRequest, mcpHandlerParams: mcpHandlerParams, metadata: Metadata, protectedPath: string, needAuth: boolean): Promise<NextResponse | Response> {
+export async function mcpMiddleware(request: NextRequest, mcpHandlerParams: mcpHandlerParams, protectedPath: string, needAuth: boolean, scopesSupported: string[]): Promise<NextResponse | Response> {
   const { method } = request
   const { mcpServer, mcpHandlerOptions, mcpHandlerConfig, verifyToken }
     = mcpHandlerParams
-  const { scopesSupported } = metadata
   if (method === 'GET' || method === 'POST') {
     // Make authorization required
     const handler = createMcpHandler(

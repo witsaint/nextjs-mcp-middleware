@@ -159,9 +159,15 @@ Main function to create MCP middleware with OAuth2 support.
 #### Options
 
 - `mcpHandlerParams`: MCP server configuration
-- `metadata`: OAuth2 client metadata
 - `needAuth`: Enable/disable authentication requirement
-- `authConfig`: Custom authentication endpoints configuration
+- `metadata`: OAuth2 client metadata，be required with `needAuth: true`
+  - `clientId`: Client ID for OAuth2
+  - `clientSecret`: Client secret for OAuth2
+  - `scopesSupported`: List of supported OAuth2 scopes
+  - `responseTypesSupported`: List of supported OAuth2 response types
+- `authConfig`: Custom authentication endpoints configuration be required with `needAuth: true`
+  - `customAuthEndpoint`: Custom authorization endpoint
+  - `customToken`: Custom token endpoint
 
 ### Types
 
