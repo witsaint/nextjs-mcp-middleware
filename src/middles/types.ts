@@ -34,6 +34,9 @@ export interface authCallParams {
 export interface tokenCallParams {
   code: string
   grantType: string
+  clientId: string
+  clientSecret?: string | null
+  codeVerifier?: string | null
 }
 
 export interface AuthConfig {

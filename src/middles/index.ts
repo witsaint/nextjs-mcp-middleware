@@ -27,7 +27,6 @@ export function nextMcpMiddleware(options: NextMcpMiddlewareOptions): {
     oauthPath,
     protectedPath,
     authRegisterPath,
-    // 如果需要匹配其他路径，可以在这里添加
   ]
 
   const handle = async function (request: NextRequest): Promise<NextResponse | Response | (() => Response)> {

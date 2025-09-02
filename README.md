@@ -110,6 +110,46 @@ SSO_CLIENT_SECRET=your_client_secret
 SSO_HOST=https://your-sso-server.com
 ```
 
+### 4. Configure MCP in Cursor/VSCode Copilot
+
+To use your MCP server with Cursor or VSCode Copilot, add the following configuration to your MCP settings:
+
+#### For Cursor
+Add to your Cursor MCP settings:
+
+```json
+{
+  "mcp-remote": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "mcp-remote",
+      "https://your-next-server.com/api/mcp",
+      "9696"
+    ]
+  }
+}
+```
+
+#### For VSCode Copilot
+Add to your VSCode MCP settings:
+
+```json
+{
+  "mcp-remote": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "mcp-remote",
+      "https://your-next-server.com/api/mcp",
+      "9696"
+    ]
+  }
+}
+```
+
+> **Note**: Replace `https://your-next-server.com/api/mcp` with your actual Next.js server URL and MCP endpoint. The port `9696` is the default MCP port, adjust as needed. This configuration is compatible with both Cursor and VSCode Copilot.
+
 ## API Reference
 
 ### `nextMcpMiddleware(options)`

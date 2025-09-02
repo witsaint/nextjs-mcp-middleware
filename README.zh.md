@@ -110,6 +110,46 @@ SSO_CLIENT_SECRET=你的客户端密钥
 SSO_HOST=https://你的-sso-服务器.com
 ```
 
+### 4. 在 Cursor/VSCode Copilot 中配置 MCP
+
+要在 Cursor 或 VSCode Copilot 中使用你的 MCP 服务器，请在 MCP 设置中添加以下配置：
+
+#### 对于 Cursor
+添加到你的 Cursor MCP 设置中：
+
+```json
+{
+  "mcp-remote": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "mcp-remote",
+      "https://your-next-server.com/api/mcp",
+      "9696"
+    ]
+  }
+}
+```
+
+#### 对于 VSCode Copilot
+添加到你的 VSCode MCP 设置中：
+
+```json
+{
+  "mcp-remote": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "mcp-remote",
+      "https://your-next-server.com/api/mcp",
+      "9696"
+    ]
+  }
+}
+```
+
+> **注意**：将 `https://your-next-server.com/api/mcp` 替换为你的实际 Next.js 服务器 URL 和 MCP 端点。端口 `9696` 是默认的 MCP 端口，可根据需要调整。此配置兼容 Cursor 和 VSCode Copilot。
+
 ## API 参考
 
 ### `nextMcpMiddleware(options)`

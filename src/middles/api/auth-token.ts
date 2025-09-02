@@ -18,8 +18,23 @@ export async function authToken(request: NextRequest, authConfig: AuthConfig): P
       const formData = await request.formData()
       const code = (formData.get('code') as string) || ''
       const grant_type = (formData.get('grant_type') as string) || ''
+      const client_id = formData.get('client_id') as string
+      const client_secret = formData.get('client_secret') as string | null
+      const code_verifier = formData.get('code_verifier') as string | undefined
+
+      if (grant_type !== 'authorization_code') {
+        console.warn('Unsupported grant type:', grant_type)
+        return NextResponse.json({ error: 'Unsupported grant type' }, {
+          status: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+        })
+      }
       const response = await customToken(
-        { code, grantType: grant_type },
+        { code, grantType: grant_type, clientId: client_id, clientSecret: client_secret, codeVerifier: code_verifier },
         request,
       )
       return jsonWithCors(request, response)

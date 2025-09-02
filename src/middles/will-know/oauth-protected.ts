@@ -16,7 +16,7 @@ export function protectedResourceMiddleware(request: NextRequest, options: {
 
   const handler = protectedResourceHandler({
     // Specify the Issuer URL of the associated Authorization Server
-    // 没有实现 猎户座没有实现auth2 的 授权服务器元数据请求”RFC8414 RFC8414
+    // 授权服务器元数据请求”RFC8414 RFC8414
     authServerUrls: [oauthPath],
     // resUrl: 'https://localhost:3443',
   })
