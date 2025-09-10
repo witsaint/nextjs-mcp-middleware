@@ -26,6 +26,7 @@ export function oauthAuthorizationMiddleware(request: NextRequest, options: { ba
         userinfoEndpoint,
         scopesSupported,
         responseTypesSupported,
+        tokenEndpointAuthMethodsSupported,
         registrationEndpoint,
       } = metadataOptions || {}
 
@@ -56,7 +57,7 @@ export function oauthAuthorizationMiddleware(request: NextRequest, options: { ba
         scopes_supported: scopesSupported || ['profile'],
 
         // Supported token authentication methods
-        token_endpoint_auth_methods_supported: [
+        token_endpoint_auth_methods_supported: tokenEndpointAuthMethodsSupported || [
           'client_secret_basic',
           'client_secret_post',
           'client_secret_jwt',

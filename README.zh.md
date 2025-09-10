@@ -161,12 +161,18 @@ SSO_HOST=https://你的-sso-服务器.com
 - `mcpHandlerParams`: MCP 服务器配置
 - `needAuth`: 启用/禁用身份验证要求
 - `metadata`: OAuth2 客户端元数据， `needAuth: true` 时必须提供
-  - `clientId`: OAuth2 的客户端 ID
-  - `clientSecret`: OAuth2 的客户端密钥
-  - `scopesSupported`: 支持的 OAuth2 作用域列表
-  - `responseTypesSupported`: 支持的 OAuth2 响应类型列表
+  - `clientId`: OAuth2 的 client_id，或返回该值的函数
+  - `clientSecret`: OAuth2 的 client_secret，或返回该值的函数
+  - `issuer?`: 授权服务器 Issuer 地址（可选）
+  - `authorizationEndpoint?`: OAuth2 授权端点地址（可选）
+  - `tokenEndpoint?`: OAuth2 令牌端点地址（可选）
+  - `registrationEndpoint?`: 动态客户端注册端点地址（可选）
+  - `userinfoEndpoint?`: 用户信息端点地址（可选）
+  - `tokenEndpointAuthMethodsSupported?`: 令牌端点支持的认证方式，如 `['client_secret_basic','client_secret_post']`（可选）
+  - `scopesSupported`: 支持的 OAuth2 作用域列表，如 `['profile']`
+  - `responseTypesSupported`: 支持的 OAuth2 响应类型列表，如 `['code','token']`
 - `authConfig`: 自定义身份验证端点配置， `needAuth: true` 时必须提供
-  - `customAuthEndpoint`: 自定义授权端点
+  - `customAuthEndpoint`: 自定义授权端点，或可选的中转跳转地址。可将其指向一个中转 URL，由中转端再次重定向到最终的 `redirectUri`。（可选）
   - `customToken`: 自定义令牌端点
 
 ### 类型
@@ -196,3 +202,17 @@ export const config = {
 - [@modelcontextprotocol/sdk](https://www.npmjs.com/package/@modelcontextprotocol/sdk)
 - [zod](https://www.npmjs.com/package/zod)
 - [mcp-handler](https://www.npmjs.com/package/mcp-handler)
+
+## 常见问题（FAQ）
+
+- 致命错误：`Error: client_secret_basic authentication requires a client_secret`
+  - 通常表示 OAuth 客户端配置为 `client_secret_basic`，但没有传递 `client_secret`。
+  - 处理方法：
+    - 确认环境变量已设置：`SSO_CLIENT_SECRET`。
+    - 本地调试若刚修改过凭据或授权范围，可清理本地 MCP 授权缓存后重试：
+      ```bash
+      rm -rf ~/.mcp-auth
+      ```
+    - 重启 MCP 客户端（如 Cursor/VSCode Copilot）与 Next.js 服务后再次尝试。
+
+> 更多内容请参考根目录英文 `README.md` 示例与 API 说明。

@@ -161,12 +161,18 @@ Main function to create MCP middleware with OAuth2 support.
 - `mcpHandlerParams`: MCP server configuration
 - `needAuth`: Enable/disable authentication requirement
 - `metadata`: OAuth2 client metadata，be required with `needAuth: true`
-  - `clientId`: Client ID for OAuth2
-  - `clientSecret`: Client secret for OAuth2
-  - `scopesSupported`: List of supported OAuth2 scopes
-  - `responseTypesSupported`: List of supported OAuth2 response types
+  - `clientId`: OAuth2 client_id value, or a function returning it
+  - `clientSecret`: OAuth2 client_secret value, or a function returning it
+  - `issuer?`: Authorization server issuer URL (optional)
+  - `authorizationEndpoint?`: OAuth2 authorization endpoint URL (optional)
+  - `tokenEndpoint?`: OAuth2 token endpoint URL (optional)
+  - `registrationEndpoint?`: Dynamic client registration endpoint URL (optional)
+  - `userinfoEndpoint?`: UserInfo endpoint URL (optional)
+  - `tokenEndpointAuthMethodsSupported?`: Supported token endpoint auth methods, e.g. `['client_secret_basic','client_secret_post']` (optional)
+  - `scopesSupported`: Supported OAuth2 scopes, e.g. `['profile']`
+  - `responseTypesSupported`: Supported OAuth2 response types, e.g. `['code','token']`
 - `authConfig`: Custom authentication endpoints configuration be required with `needAuth: true`
-  - `customAuthEndpoint`: Custom authorization endpoint
+  - `customAuthEndpoint`: Custom authorization endpoint or an optional intermediate redirect URL. You can point this to a relay URL which then performs a second redirect to your final `redirectUri`.default redirectUri (optional).
   - `customToken`: Custom token endpoint
 
 ### Types
@@ -196,3 +202,17 @@ This package requires **Next.js 15.5.2 or higher** for proper MCP middleware sup
 - [@modelcontextprotocol/sdk](https://www.npmjs.com/package/@modelcontextprotocol/sdk)
 - [zod](https://www.npmjs.com/package/zod)
 - [mcp-handler](https://www.npmjs.com/package/mcp-handler)
+
+## FAQ
+
+- **Fatal error: Error: client_secret_basic authentication requires a client_secret**
+  - This usually means your OAuth client is configured to use `client_secret_basic` but the `client_secret` is missing or not being sent.
+  - Quick fixes:
+    - Ensure `SSO_CLIENT_SECRET` is set in your environment and correctly loaded by your Next.js app.
+    - If you recently changed credentials or scopes in local development, clear the local MCP auth cache:
+      ```bash
+      rm -rf ~/.mcp-auth
+      ```
+    - Restart your MCP client (Cursor/VSCode Copilot) and your Next.js server, then retry.
+
+> For Chinese documentation, see `docs/README.zh-CN.md`.

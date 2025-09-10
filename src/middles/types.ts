@@ -7,6 +7,7 @@ export interface Metadata {
   tokenEndpoint?: string
   registrationEndpoint?: string
   userinfoEndpoint?: string
+  tokenEndpointAuthMethodsSupported?: string[]
   scopesSupported: string[]
   responseTypesSupported: string[]
   clientId: string | (() => string)
@@ -40,7 +41,7 @@ export interface tokenCallParams {
 }
 
 export interface AuthConfig {
-  customAuthEndpoint:
+  customAuthEndpoint?:
     | string
     | ((authCallParams: authCallParams) => Promise<string>)
   customToken: (
