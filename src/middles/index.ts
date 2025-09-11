@@ -47,6 +47,7 @@ export function nextMcpMiddleware(options: NextMcpMiddlewareOptions): {
       if (pathname === oauthPath) {
         return oauthAuthorizationMiddleware(request, {
           basePath,
+          metadata,
         })
       }
 
