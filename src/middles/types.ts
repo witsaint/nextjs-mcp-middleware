@@ -47,7 +47,7 @@ export interface AuthConfig {
   customToken: (
     tokenCallParams: tokenCallParams,
     request: NextRequest
-  ) => Promise<Record<string, string>>
+  ) => Promise<Record<string, string | number | boolean>>
 }
 
 export type NextMcpMiddlewareOptions = {
