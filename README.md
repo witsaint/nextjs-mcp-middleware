@@ -35,6 +35,7 @@ Ensure your project has `@modelcontextprotocol/sdk` properly installed and confi
 ```ts
 // src/middleware.ts
 import { nextMcpMiddleware } from 'nextjs-mcp-middleware'
+import type { NextRequest } from 'next/server'
 
 // Token verification function
 async function verifyToken(req: Request, bearerToken?: string): Promise<AuthInfo | undefined> {
@@ -75,7 +76,7 @@ const { middlewareGenerator, matcher } = nextMcpMiddleware({
   },
   needAuth: true,
   authConfig: {
-    async customAuthEndpoint(params: authCallParams) {
+    async customAuthEndpoint(params: authCallParams, request: NextRequest) {
       const { responseType, clientId, redirectUri, scope, state } = params
       return `${process.env.SSO_HOST}/v1/oauth/authorize?response_type=${responseType}&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${state}`
     },
@@ -172,7 +173,9 @@ Main function to create MCP middleware with OAuth2 support.
   - `scopesSupported`: Supported OAuth2 scopes, e.g. `['profile']`
   - `responseTypesSupported`: Supported OAuth2 response types, e.g. `['code','token']`
 - `authConfig`: Custom authentication endpoints configuration be required with `needAuth: true`
-  - `customAuthEndpoint`: Custom authorization endpoint or an optional intermediate redirect URL. You can point this to a relay URL which then performs a second redirect to your final `redirectUri`.default redirectUri (optional).
+  - `customAuthEndpoint`: Custom authorization endpoint. Supports two forms:
+    - String: a fixed URL or an intermediate relay URL. You can point this to a relay URL which then performs a second redirect to your final `redirectUri` (e.g. `/api/relay-auth?redirect_uri=...`).
+    - Function: `(params: authCallParams, request: NextRequest) => Promise<string> | string` for fully dynamic URL construction based on `responseType`, `clientId`, `redirectUri`, `scope`, `state`, and the current `request`.
   - `customToken`: Custom token endpoint
 
 ### Types
@@ -196,6 +199,36 @@ export const config = {
 ### Next.js Version
 
 This package requires **Next.js 15.5.2 or higher** for proper MCP middleware support.
+
+### Debug Logging
+
+You can enable verbose middleware logs using the `debug` package namespace `mcp:middleware`.
+
+Run with environment variable:
+
+```bash
+# Enable only middleware logs
+DEBUG=mcp:middleware pnpm dev
+
+# Enable all mcp-related logs
+DEBUG=mcp:* pnpm dev
+
+# Multiple patterns
+DEBUG=mcp:middleware,other:debug pnpm dev
+```
+
+During tests (Vitest):
+
+```bash
+DEBUG=mcp:middleware pnpm test
+```
+
+In the example app (workspace):
+
+```bash
+pnpm -F example dev:debug
+pnpm -F example dev:debug:all
+```
 
 ## Dependencies
 

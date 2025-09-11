@@ -35,6 +35,7 @@ yarn add nextjs-mcp-middleware
 ```ts
 // src/middleware.ts
 import { nextMcpMiddleware } from 'nextjs-mcp-middleware'
+import type { NextRequest } from 'next/server'
 
 // 令牌验证函数
 async function verifyToken(req: Request, bearerToken?: string): Promise<AuthInfo | undefined> {
@@ -75,7 +76,7 @@ const { middlewareGenerator, matcher } = nextMcpMiddleware({
   },
   needAuth: true,
   authConfig: {
-    async customAuthEndpoint(params: authCallParams) {
+    async customAuthEndpoint(params: authCallParams, request: NextRequest) {
       const { responseType, clientId, redirectUri, scope, state } = params
       return `${process.env.SSO_HOST}/v1/oauth/authorize?response_type=${responseType}&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${state}`
     },
@@ -172,7 +173,9 @@ SSO_HOST=https://你的-sso-服务器.com
   - `scopesSupported`: 支持的 OAuth2 作用域列表，如 `['profile']`
   - `responseTypesSupported`: 支持的 OAuth2 响应类型列表，如 `['code','token']`
 - `authConfig`: 自定义身份验证端点配置， `needAuth: true` 时必须提供
-  - `customAuthEndpoint`: 自定义授权端点，或可选的中转跳转地址。可将其指向一个中转 URL，由中转端再次重定向到最终的 `redirectUri`。（可选）
+  - `customAuthEndpoint`: 自定义授权端点，支持两种形式：
+    - 字符串：固定 URL 或“中转”URL，可先跳转到中转 URL，再由中转端二次跳转到最终的 `redirectUri`（例如：`/api/relay-auth?redirect_uri=...`）。
+    - 函数：`(params: authCallParams, request: NextRequest) => Promise<string> | string`，可基于 `responseType`、`clientId`、`redirectUri`、`scope`、`state` 与当前 `request` 动态生成授权地址。
   - `customToken`: 自定义令牌端点
 
 ### 类型
@@ -196,6 +199,36 @@ export const config = {
 ### Next.js 版本
 
 此包需要 **Next.js 15.5.2 或更高版本** 以获得适当的 MCP 中间件支持。
+
+### Debug 日志
+
+可以通过 `DEBUG` 环境变量启用中间件的调试日志（使用 `debug` 库命名空间 `mcp:middleware`）。
+
+运行时启用：
+
+```bash
+# 仅启用 middleware 日志
+DEBUG=mcp:middleware pnpm dev
+
+# 启用所有 mcp 相关日志
+DEBUG=mcp:* pnpm dev
+
+# 同时启用多个模式
+DEBUG=mcp:middleware,other:debug pnpm dev
+```
+
+在测试（Vitest）中：
+
+```bash
+DEBUG=mcp:middleware pnpm test
+```
+
+在示例应用（workspace）中：
+
+```bash
+pnpm -F example dev:debug
+pnpm -F example dev:debug:all
+```
 
 ## 依赖
 

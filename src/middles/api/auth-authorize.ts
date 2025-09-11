@@ -31,7 +31,7 @@ export async function authAuthorize(request: NextRequest, authConfig: AuthConfig
         redirectUri: redirect_uri || '',
         scope: scope || '',
         state: state || generateState(),
-      })
+      }, request)
     }
     else {
       url = customAuthEndpoint

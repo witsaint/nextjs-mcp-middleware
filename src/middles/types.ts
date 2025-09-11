@@ -43,7 +43,7 @@ export interface tokenCallParams {
 export interface AuthConfig {
   customAuthEndpoint?:
     | string
-    | ((authCallParams: authCallParams) => Promise<string>)
+    | ((authCallParams: authCallParams, request: NextRequest) => Promise<string> | string)
   customToken: (
     tokenCallParams: tokenCallParams,
     request: NextRequest
