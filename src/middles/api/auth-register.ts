@@ -47,7 +47,7 @@ function funcStr(func: string | (() => string)): string {
 
 export async function authRegister(request: NextRequest, metadata: Metadata): Promise<NextResponse> {
   const { method } = request
-  const { clientId, clientSecret } = metadata
+  const { clientId, clientSecret, scopesSupported } = metadata
   if (method === 'OPTIONS') {
     const headers = getCorsHeaders(request)
     return new NextResponse(null, {
@@ -80,7 +80,7 @@ export async function authRegister(request: NextRequest, metadata: Metadata): Pr
         grant_types: validatedData.grant_types,
         response_types: validatedData.response_types,
         redirect_uris: validatedData.redirect_uris,
-        scope: validatedData.scope || 'profile',
+        scope: validatedData.scope || scopesSupported.join(','),
         client_name: validatedData.client_name,
         client_uri: validatedData.client_uri,
         logo_uri: validatedData.logo_uri,
