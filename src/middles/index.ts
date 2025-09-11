@@ -4,6 +4,7 @@ import { authAuthorize } from './api/auth-authorize'
 import { authRegister } from './api/auth-register'
 import { authToken } from './api/auth-token'
 import { mcpMiddleware } from './api/mcp'
+import { debugLogger } from './debug'
 import { oauthAuthorizationMiddleware } from './will-know/oauth-authoriztion'
 import { protectedResourceMiddleware } from './will-know/oauth-protected'
 
@@ -14,6 +15,8 @@ export function nextMcpMiddleware(options: NextMcpMiddlewareOptions): {
   const { mcpHandlerParams, metadata, next, authConfig, needAuth } = options
   const { mcpHandlerConfig } = mcpHandlerParams
   const { scopesSupported } = metadata || {}
+
+  debugLogger('[nextMcpMiddleware] options', options)
 
   const { basePath = '/api' } = mcpHandlerConfig || {}
   const mcpPath = `${basePath}/mcp`

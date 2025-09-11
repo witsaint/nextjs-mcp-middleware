@@ -1,15 +1,19 @@
 import {
-  metadataCorsOptionsRequestHandler,
   protectedResourceHandler,
 } from 'mcp-handler'
 import { type NextRequest, NextResponse } from 'next/server'
+import { getCorsHeaders } from '../cors'
 
 export function protectedResourceMiddleware(request: NextRequest, options: {
   oauthPath: string
 }): NextResponse | Response | (() => Response) {
   const { method } = request
   if (method === 'OPTIONS') {
-    return metadataCorsOptionsRequestHandler()
+    const headers = getCorsHeaders(request)
+    return new NextResponse(null, {
+      status: 200,
+      headers,
+    })
   }
 
   const { oauthPath } = options
@@ -18,7 +22,6 @@ export function protectedResourceMiddleware(request: NextRequest, options: {
     // Specify the Issuer URL of the associated Authorization Server
     // 授权服务器元数据请求”RFC8414 RFC8414
     authServerUrls: [oauthPath],
-    // resUrl: 'https://localhost:3443',
   })
   if (method === 'GET') {
     return handler(request)

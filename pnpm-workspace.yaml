@@ -3,6 +3,7 @@ packages:
 catalog:
   '@modelcontextprotocol/sdk': ^1.17.4
   '@types/next': ^9.0.0
+  debug: ^4.4.1
   mcp-handler: ^1.0.2
   next: ^15.5.2
   zod: ^4.1.5

@@ -38,6 +38,7 @@
     "next": "catalog:"
   },
   "dependencies": {
+    "debug": "catalog:",
     "mcp-handler": "catalog:",
     "zod": "catalog:"
   },

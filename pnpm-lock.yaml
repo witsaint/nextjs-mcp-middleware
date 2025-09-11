@@ -31,9 +31,6 @@ catalogs:
       specifier: ^3.5.0
       version: 3.5.0
   default:
-    '@modelcontextprotocol/sdk':
-      specifier: ^1.17.4
-      version: 1.17.4
     '@types/next':
       specifier: ^9.0.0
       version: 9.0.0
@@ -66,11 +63,14 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: 'catalog:'
         version: 1.17.4
+      debug:
+        specifier: ^4.4.1
+        version: 4.4.1
       mcp-handler:
         specifier: 'catalog:'
         version: 1.0.2(@modelcontextprotocol/sdk@1.17.4)(next@15.5.2(react-dom@19.1.1(react@19.1.1))(react@19.1.1))
       next:
-        specifier: ^15.5.2
+        specifier: 'catalog:'
         version: 15.5.2(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       zod:
         specifier: 'catalog:'
