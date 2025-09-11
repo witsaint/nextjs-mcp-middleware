@@ -23,7 +23,7 @@
   "scripts": {
     "build": "unbuild",
     "build-release": "unbuild",
-    "dev": "unbuild --dev",
+    "dev": "unbuild --stub",
     "lint": "eslint . --cache --cache-location .cache/eslint/main.eslintcache",
     "release": "bumpp && pnpm publish",
     "test": "vitest run test/simple.test.ts test/comprehensive.test.ts",

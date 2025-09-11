@@ -1,6 +1,7 @@
 import type { Metadata } from '../types'
 import { type NextRequest, NextResponse } from 'next/server'
 import { getCorsHeaders, jsonWithCors } from '../cors'
+import { willKnowAuthorizationLogger } from '../debug'
 
 export function oauthAuthorizationMiddleware(request: NextRequest, options: { basePath: string, metadata?: Metadata }): NextResponse {
   const { method } = request
@@ -13,12 +14,17 @@ export function oauthAuthorizationMiddleware(request: NextRequest, options: { ba
   }
 
   if (method === 'GET') {
+
     try {
       // Get the base URL from the request
       const protocol = request.headers.get('x-forwarded-proto') || 'http'
       const host = request.headers.get('host')
       const baseUrl = `${protocol}://${host}`
       const { basePath, metadata: metadataOptions } = options
+      willKnowAuthorizationLogger(`[oauthAuthorizationMiddleware] options %O`, {
+        basePath,
+        metadata: metadataOptions,
+      })
       const {
         issuer,
         authorizationEndpoint,
@@ -229,6 +235,8 @@ export function oauthAuthorizationMiddleware(request: NextRequest, options: { ba
         op_tos_uri: `${baseUrl}/docs/op-terms`,
       }
 
+      willKnowAuthorizationLogger(`[oauthAuthorizationMiddleware] metadata %O`, metadata)
+
       return jsonWithCors(request, metadata, {
         status: 200,
         headers: {
@@ -239,7 +247,6 @@ export function oauthAuthorizationMiddleware(request: NextRequest, options: { ba
     }
     catch (error) {
       console.error('Error generating OAuth2 metadata:', error)
-
       return NextResponse.json(
         {
           error: 'internal_server_error',

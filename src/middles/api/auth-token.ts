@@ -1,6 +1,7 @@
 import type { AuthConfig } from '../types'
 import { type NextRequest, NextResponse } from 'next/server'
 import { getCorsHeaders, jsonWithCors } from '../cors'
+import { apiTokenLogger } from '../debug'
 
 export async function authToken(request: NextRequest, authConfig: AuthConfig): Promise<NextResponse> {
   const { method } = request
@@ -37,6 +38,13 @@ export async function authToken(request: NextRequest, authConfig: AuthConfig): P
         { code, grantType: grant_type, clientId: client_id, clientSecret: client_secret, codeVerifier: code_verifier },
         request,
       )
+      apiTokenLogger(`[authToken] result %O`, {
+        code,
+        grant_type,
+        client_id,
+        client_secret,
+        code_verifier,
+      })
       return jsonWithCors(request, response)
     }
     catch (error) {

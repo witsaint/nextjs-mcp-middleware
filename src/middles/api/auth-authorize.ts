@@ -1,3 +1,4 @@
+import { apiAuthorizationLogger } from '../debug'
 import type { AuthConfig } from '../types'
 import { type NextRequest, NextResponse } from 'next/server'
 
@@ -15,6 +16,13 @@ export async function authAuthorize(request: NextRequest, authConfig: AuthConfig
   const state = searchParams.get('state')
 
   let url = ''
+  apiAuthorizationLogger(`[authAuthorize] params %O`, {
+    response_type,
+    client_id,
+    redirect_uri,
+    scope,
+    state,
+  })
   if (customAuthEndpoint) {
     if (typeof customAuthEndpoint === 'function') {
       url = await customAuthEndpoint({
@@ -29,6 +37,7 @@ export async function authAuthorize(request: NextRequest, authConfig: AuthConfig
       url = customAuthEndpoint
     }
   }
+  apiAuthorizationLogger(`[authAuthorize] url ${url}`)
 
   return NextResponse.redirect(url)
 }

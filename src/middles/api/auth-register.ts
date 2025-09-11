@@ -2,6 +2,7 @@ import type { Metadata, RegistrationResponse } from '../types'
 import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getCorsHeaders, jsonWithCors } from '../cors'
+import { apiRegisterLogger } from '../debug'
 
 // OAuth2 Registration Request Schema
 const RegistrationSchema = z.object({
@@ -60,6 +61,7 @@ export async function authRegister(request: NextRequest, metadata: Metadata): Pr
     try {
       // Parse and validate the request body
       const body = await request.json()
+      apiRegisterLogger(`[authRegister] body %O`, body)
       const validatedData = RegistrationSchema.parse(body)
 
       // Generate OAuth2 client credentials
@@ -95,6 +97,10 @@ export async function authRegister(request: NextRequest, metadata: Metadata): Pr
       // Store the registration (replace with database in production)
       // clientRegistrations?.set(clientId, registrationResponse);
 
+      apiRegisterLogger(`[authRegister] registrationResponse %O`, {
+        registrationResponse,
+        validatedData,
+      })
       // Return the registration response
       return jsonWithCors(request, registrationResponse, {
         status: 200,

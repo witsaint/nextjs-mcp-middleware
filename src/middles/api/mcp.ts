@@ -1,6 +1,7 @@
 import type { mcpHandlerParams } from '../types'
 import { createMcpHandler, withMcpAuth } from 'mcp-handler'
 import { type NextRequest, NextResponse } from 'next/server'
+import { apiMcpLogger } from '../debug'
 
 export async function mcpMiddleware(request: NextRequest, mcpHandlerParams: mcpHandlerParams, protectedPath: string, needAuth: boolean, scopesSupported: string[]): Promise<NextResponse | Response> {
   const { method } = request
@@ -13,6 +14,11 @@ export async function mcpMiddleware(request: NextRequest, mcpHandlerParams: mcpH
       mcpHandlerOptions,
       mcpHandlerConfig,
     )
+    apiMcpLogger(`[mcpMiddleware] handler %O`, {
+      needAuth,
+      scopesSupported,
+      protectedPath,
+    })
     const authHandler = withMcpAuth(handler, verifyToken, {
       required: needAuth, // Make auth required for all requests
       requiredScopes: scopesSupported, // Optional: Require specific scopes

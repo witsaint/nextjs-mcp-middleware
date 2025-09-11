@@ -4,7 +4,7 @@ import { authAuthorize } from './api/auth-authorize'
 import { authRegister } from './api/auth-register'
 import { authToken } from './api/auth-token'
 import { mcpMiddleware } from './api/mcp'
-import { debugLogger } from './debug'
+import { mcpIndexLogger } from './debug'
 import { oauthAuthorizationMiddleware } from './will-know/oauth-authoriztion'
 import { protectedResourceMiddleware } from './will-know/oauth-protected'
 
@@ -16,7 +16,7 @@ export function nextMcpMiddleware(options: NextMcpMiddlewareOptions): {
   const { mcpHandlerConfig } = mcpHandlerParams
   const { scopesSupported } = metadata || {}
 
-  debugLogger('[nextMcpMiddleware] options', options)
+  mcpIndexLogger(`[nextMcpMiddleware] options %O`, options)
 
   const { basePath = '/api' } = mcpHandlerConfig || {}
   const mcpPath = `${basePath}/mcp`
@@ -37,6 +37,7 @@ export function nextMcpMiddleware(options: NextMcpMiddlewareOptions): {
     const { pathname } = request.nextUrl
 
     if (pathname === mcpPath) {
+      mcpIndexLogger(`[nextMcpMiddleware] mcpPath ${mcpPath}`)
       return mcpMiddleware(
         request,
         mcpHandlerParams,
@@ -48,6 +49,7 @@ export function nextMcpMiddleware(options: NextMcpMiddlewareOptions): {
 
     if (needAuth) {
       if (pathname === oauthPath) {
+        mcpIndexLogger(`[nextMcpMiddleware] oauthPath ${oauthPath} %O`, metadata)
         return oauthAuthorizationMiddleware(request, {
           basePath,
           metadata,
@@ -55,20 +57,24 @@ export function nextMcpMiddleware(options: NextMcpMiddlewareOptions): {
       }
 
       if (pathname === protectedPath) {
+        mcpIndexLogger(`[nextMcpMiddleware] protectedPath ${protectedPath} ${oauthPath}`)
         return protectedResourceMiddleware(request, {
           oauthPath,
         })
       }
 
       if (pathname === authRegisterPath) {
+        mcpIndexLogger(`[nextMcpMiddleware] authRegisterPath ${authRegisterPath} %O`, metadata)
         return authRegister(request, metadata)
       }
 
       if (pathname === authAuthorizePath) {
+        mcpIndexLogger(`[nextMcpMiddleware] authAuthorizePath ${authAuthorizePath} %O`, authConfig)
         return authAuthorize(request, authConfig)
       }
 
       if (pathname === authTokenPath) {
+        mcpIndexLogger(`[nextMcpMiddleware] authTokenPath ${authTokenPath} %O`, authConfig)
         return authToken(request, authConfig)
       }
     }
