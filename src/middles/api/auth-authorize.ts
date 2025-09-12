@@ -38,6 +38,9 @@ export async function authAuthorize(request: NextRequest, authConfig: AuthConfig
     }
   }
   apiAuthorizationLogger(`[authAuthorize] url ${url}`)
+  if (!url) {
+    return NextResponse.json({ error: 'Invalid URL' }, { status: 400 })
+  }
 
   return NextResponse.redirect(url)
 }
